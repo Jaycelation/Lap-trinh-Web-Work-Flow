@@ -1,0 +1,228 @@
+/* App.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.App-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+
+h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+}
+
+.search-container {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.search-controls {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+  width: 300px;     
+}
+
+.search-type {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-left: none;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #2980b9;
+}
+
+.search-info {
+  color: #777;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.results-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.country-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.country-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.flag-container {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.country-flag {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.country-info {
+  padding: 15px;
+}
+
+.country-name {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.country-details {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: #3498db;
+}
+
+.loading-results {
+  text-align: center;
+  padding: 2rem;
+  color: #3498db;
+  font-size: 1.2rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #e74c3c;
+}
+
+.error button {
+  margin-top: 1rem;
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .search-controls {
+    flex-direction: column;
+  }
+
+  .search-input,
+  .search-type,
+  .search-button {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+  }
+
+  .countries-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .country-name {
+    font-size: 1.2rem;
+  }
+}
+label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+.fetch-button {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.fetch-button:hover {
+  background-color: #0056b3;
+}
+
+.order-toggle {
+  display: flex;
+  gap: 2rem;
+  margin: 10px 0;
+}
+
+.order-toggle div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
