@@ -1,199 +1,235 @@
-import { useState, useEffect } from "react";
-import CountryCard from "./CountryCard";
-import "./styles.css";
+import { BrowserRouter as Router, Routes, Route, Link, Outlet, useParams, useNavigate, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import BlogPosts from './Blogs.js';
+import Users from './Users.js';
 
-export default function App() {
-  const [countries, setCountries] = useState([]);
-  const [query, setQuery] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState("name");
-  const [order, setOrder] = useState("asc");
-  const [subRegionFilter, setSubRegionFilter] = useState("all");
-  
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const url =
-        "https://restcountries.com/v3.1/all?fields=name,flags,capital,region,subregion,languages,population";
-      const response = await fetch(url);
+function Login({ onLogin, checkLogin }) {
+  const [creds, setCreds] = useState({});
+  const navigate = useNavigate();
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Error ${response.status}: ${text}`);
-      }
-
-      const data = await response.json();
-      setCountries(data);
-    } catch (err) {
-      setError(err.message);
-      console.error("Error fetching countries:", err);
-    } finally {
-      setLoading(false);
+  function handleLogin() {
+    const userLogin = checkLogin(creds.username, creds.password);
+    if (userLogin) {
+      onLogin && onLogin(userLogin);
+      navigate('/stats');
+    } else {
+      alert('Invalid username or password');
     }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    setSubRegionFilter("all");
-  }, [filter]);
-
-  if (loading && countries.length === 0) {
-    return <div className="loading">Loading countries...</div>;
   }
-
-  if (error) {
-    return (
-      <div className="error">
-        <h2>Error</h2>
-        <p>{error}</p>
-        <button onClick={fetchData}>Try again</button>
-      </div>
-    );
-  }
-
-  const regions = [...new Set(countries.map((c) => c.region).filter(Boolean))];
-  
-  const subregions = [
-    ...new Set(
-      countries
-        .filter((c) => (filter === "all" ? true : c.region === filter))
-        .map((c) => c.subregion)
-        .filter(Boolean)
-    ),
-  ];
-
-  const handleSearch = () => {
-    setSearchQuery(query.trim());
-  };
-
-  const filteredData = countries
-    .filter((country) =>
-      country.name?.common
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase().trim())
-    )
-    .filter((country) => (filter === "all" ? true : country.region === filter))
-    .filter((country) => (subRegionFilter === "all" ? true : country.subregion === subRegionFilter))
-    .sort((a, b) => {
-      let x, y;
-      switch (sortBy) {
-        case "region":
-          x = a.region || "";
-          y = b.region || "";
-          break;
-        case "subregion":
-          x = a.subregion || "";
-          y = b.subregion || "";
-          break;
-        case "population":
-          x = a.population || 0;
-          y = b.population || 0;
-          break;
-        default:
-          x = a.name?.common || 0;
-          y = b.name?.common || 0;
-      }
-      let result;
-      if (typeof x === "string" && typeof y === "string") {
-        result = x.localeCompare(y);
-      } else {
-        result = x - y;
-      }
-      return order === "asc" ? result : -result;
-    });
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Country Card</h1>
-      </header>
-      <main>
-        <label>Search by name:</label>
-        <div className="search-controls">
-          <input
-            type="text"
-            name="search"
-            className="search-input"
-            placeholder="Type a country name..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button onClick={handleSearch} className="search-button">Search</button>
-        </div>
-        
-        <label>Filter by region:</label>
-        <select
-          className="search-type"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">All regions</option>
-          {regions.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
-
-        <label>Filter by subregion:</label>
-        <select
-          className="search-type"
-          value={subRegionFilter}
-          onChange={(e) => setSubRegionFilter(e.target.value)}
-        >
-          <option value="all">All subregions</option>
-          {subregions.map((sr) => (
-            <option key={sr} value={sr}>
-              {sr}
-            </option>
-          ))}
-        </select>
-
-        <label>Sort by:</label>
-        <select
-          className="search-type"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-        >
-          <option value="name">Name</option>
-          <option value="region">Region</option>
-          <option value="subregion">Subregion</option>
-          <option value="population">Population</option>
-        </select>
-
-        <label>Order:</label>
-        <select
-          className="search-type"
-          value={order}
-          onChange={(e) => setOrder(e.target.value)}
-        >
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </select>
-
-        {loading ? (
-          <div className="loading-results">Loading...</div>
-        ) : (
-          <>
-            <div className="results-info">
-              {filteredData.length}{" "}
-              {filteredData.length > 1 ? "countries" : "country"} found.
-            </div>
-            <div className="countries-grid">
-              {filteredData.map((c) => (
-                <CountryCard key={c.cca3} country={c} />
-              ))}
-            </div>
-          </>
-        )}
-      </main>
+    <div style={{ padding: 10 }}>
+      <h2>Login</h2>
+      <span>Username:</span><br />
+      <input type="text" onChange={(e) => setCreds({ ...creds, username: e.target.value })} /><br />
+      <span>Password:</span><br />
+      <input type="password" onChange={(e) => setCreds({ ...creds, password: e.target.value })} /><br /><br />
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
+
+function ChangePassword({ user, changePassword }) {
+  const [password, setPassword] = useState({ old: '', new: '', confirm: '' });
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const handleChange = (e) => {
+    setPassword({ ...password, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = () => {
+    setMessage('');
+
+    if (password.new !== password.confirm) {
+      setMessage('New passwords do not match!');
+      return;
+    }
+
+    if (!password.new) {
+      setMessage('New password cannot be empty.');
+      return;
+    }
+
+    const result = changePassword(user.username, password.old, password.new);
+
+    if (result.success) {
+      setMessage(result.message + ' Redirecting to home...');
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } else {
+      setMessage(result.message);
+    }
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Change Password for {user.username}</h2>
+      <span>Old Password:</span><br />
+      <input type="password" name="old" value={password.old} onChange={handleChange} /><br />
+      <span>New Password:</span><br />
+      <input type="password" name="new" value={password.new} onChange={handleChange} /><br />
+      <span>Confirm New Password:</span><br />
+      <input type="password" name="confirm" value={password.confirm} onChange={handleChange} /><br /><br />
+      <button onClick={handleSubmit}>Change Password</button>
+      {message && <p>{message}</p>}
+    </div>
+  );
+}
+
+function AppLayout() {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(Users);
+
+  function logout() {
+    setUser(null);
+    navigate('/');
+  }
+
+  function checkLogin(username, password) {
+    const curUser = userData[username];
+    if (curUser && curUser.password === password) {
+      return { username: username };
+    }
+    return null;
+  }
+
+  function changePassword(username, oldPassword, newPassword) {
+    const curUser = userData[username];
+    if (!curUser) {
+      return { success: false, message: 'User not found' };
+    }
+    if (curUser.password !== oldPassword) {
+      return { success: false, message: 'Incorrect old password' };
+    }
+
+    const updatedData = {
+      ...userData,
+      [username]: {
+        ...curUser,
+        password: newPassword,
+      },
+    };
+    setUserData(updatedData);
+    return { success: true, message: 'Password changed successfully.' };
+  }
+
+  return (
+    <>
+      <nav style={{ margin: 10 }}>
+        <Link to="/" style={{ padding: 5 }}>Home</Link>
+        <Link to="/posts" style={{ padding: 5 }}>Posts</Link>
+        <Link to="/about" style={{ padding: 5 }}>About</Link>
+        <span> | </span>
+        {user && <Link to="/stats" style={{ padding: 5 }}>Stats</Link>}
+        {!user && <Link to="/login" style={{ padding: 5 }}>Login</Link>}
+        {/* {user && <Link to="/change-password" style={{ padding: 5 }}>Change Password</Link>} */}
+        {user && <span onClick={logout} style={{ padding: 5, cursor: 'pointer' }}>Logout</span>}
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/posts" element={<Posts />}>
+          <Route index element={<PostLists />} />
+          <Route path=":slug" element={<Post />} />
+        </Route>
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={<Login onLogin={setUser} checkLogin={checkLogin} />} />
+        <Route path="/stats" element={<Stats user={user} />} />
+        {/* <Route path="/change-password" element={<ChangePassword user={user} changePassword={changePassword} />} /> */}
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppLayout />
+    </Router>
+  );
+}
+
+function Home() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Home View</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adip.</p>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>About View</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adip.</p>
+    </div>
+  );
+}
+
+function NoMatch() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>404: Page Not Found</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adip.</p>
+    </div>
+  );
+}
+
+function Posts() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Blog</h2>
+      <Outlet />
+    </div>
+  );
+}
+
+function PostLists() {
+  return (
+    <ul>
+      {Object.entries(BlogPosts).map(([slug, { title }]) => (
+        <li key={slug}>
+          <Link to={`/posts/${slug}`}><h3>{title}</h3></Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Post() {
+  const { slug } = useParams();
+  const post = BlogPosts[slug];
+  if (!post) {
+    return <span>The blog post you've requested doesn't exist.</span>;
+  }
+  const { title, description } = post;
+  return (
+    <div style={{ padding: 20 }}>
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+function Stats({ user }) {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Stats View</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adip.</p>
+    </div>
+  );
+}
+
+export default App;
